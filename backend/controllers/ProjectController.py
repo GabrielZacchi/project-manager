@@ -54,6 +54,7 @@ def get_project_by_id(id):
 
 def add_project():
     data = request.json
+    username = request.headers.get('username')
     try:
         project = Project(
             data.get('title'),
@@ -61,7 +62,7 @@ def add_project():
             data.get('cost'),
             data.get('done'),
             data.get('deadline'),
-            data.get('username'),
+            username,
             data.get('created_at'),
             data.get('updated_at')
         )
@@ -77,5 +78,124 @@ def add_project():
             'path': '/projects'
         }
         return(jsonify(response), status.HTTP_400_BAD_REQUEST)
+
+def update_project(id):
+    try:
+        data = request.json
+        username = request.headers.get('username')
+        project = Project.query.filter_by(id=id).first()
+        if project:
+                if username == project.username:
+                    project.title = data.get('title')
+                    project.zip_code = data.get('zip_code')
+                    project.cost = data.get('cost')
+                    project.updated_at = db.func.current_timestamp()
+                    db.session.commit()
+                    return jsonify(project.serialize())
+                else:
+                    response = {
+                        'timestamp': datetime.now(),
+                        'status': 400,
+                        'error': 'Bad Request',
+                        'message': "This project does not belong to the informed user!",
+                        'path': '/projects'
+                    }
+                    return(jsonify(response), status.HTTP_400_BAD_REQUEST)
+        else:
+            response = {
+            'timestamp': datetime.now(),
+            'status': 400,
+            'error': 'Bad Request',
+            'message': "Project not found!",
+            'path': '/projects'
+        }
+        return(jsonify(response), status.HTTP_400_BAD_REQUEST)
+    except SQLAlchemyError as err:
+        response = {
+            'timestamp': datetime.now(),
+            'status': 400,
+            'error': 'Bad Request',
+            'message': str(err.__dict__['orig']),
+            'path': '/projects'
+        }
+        return(jsonify(response), status.HTTP_400_BAD_REQUEST)
+
+def finalize_project(id):
+    try:
+        username = request.headers.get('username')
+        project = Project.query.filter_by(id=id).first()
+        if project:
+                if username == project.username:
+                    project.done = True
+                    project.updated_at = db.func.current_timestamp()
+                    db.session.commit()
+                    return jsonify(project.serialize())
+                else:
+                    response = {
+                        'timestamp': datetime.now(),
+                        'status': 400,
+                        'error': 'Bad Request',
+                        'message': "This project does not belong to the informed user!",
+                        'path': '/projects'
+                    }
+                    return(jsonify(response), status.HTTP_400_BAD_REQUEST)
+        else:
+            response = {
+            'timestamp': datetime.now(),
+            'status': 400,
+            'error': 'Bad Request',
+            'message': "Project not found!",
+            'path': '/projects'
+        }
+        return(jsonify(response), status.HTTP_400_BAD_REQUEST)
+    except SQLAlchemyError as err:
+        response = {
+            'timestamp': datetime.now(),
+            'status': 400,
+            'error': 'Bad Request',
+            'message': str(err.__dict__['orig']),
+            'path': '/projects'
+        }
+        return(jsonify(response), status.HTTP_400_BAD_REQUEST)
+
+def delete_project(id):
+    try:
+        username = request.headers.get('username')
+        project = Project.query.filter_by(id=id).first()
+        if project:
+                if username == project.username:
+                    db.session.delete(project)
+                    db.session.commit()
+                    return jsonify(project.serialize())
+                else:
+                    response = {
+                        'timestamp': datetime.now(),
+                        'status': 400,
+                        'error': 'Bad Request',
+                        'message': "This project does not belong to the informed user!",
+                        'path': '/projects'
+                    }
+                    return(jsonify(response), status.HTTP_400_BAD_REQUEST)
+        else:
+            response = {
+            'timestamp': datetime.now(),
+            'status': 400,
+            'error': 'Bad Request',
+            'message': "Project not found!",
+            'path': '/projects'
+        }
+        return(jsonify(response), status.HTTP_400_BAD_REQUEST)
+    except SQLAlchemyError as err:
+        response = {
+            'timestamp': datetime.now(),
+            'status': 400,
+            'error': 'Bad Request',
+            'message': str(err.__dict__['orig']),
+            'path': '/projects'
+        }
+        return(jsonify(response), status.HTTP_400_BAD_REQUEST)
+
+
+        
 
 
