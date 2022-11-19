@@ -2,23 +2,45 @@ from flask_api import status
 from flask import jsonify, request
 from models import Project
 from database.database import db
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import exc
 from datetime import datetime
 from utils import search_by_cep
+
+def handle_exceptions(err, data):
+    response = {
+        'timestamp': datetime.now(),
+        'status': 400,
+        'error': 'Bad Request',
+        'message': str(err.__dict__['orig']),
+        'path': '/projects'
+    }
+    if type(err) == exc.IntegrityError:
+        response['error'] = "IntegrityError"
+        err_msg = "O campo deve ser preenchido!"
+        if data.get('title') is None:
+            response['title'] = err_msg
+        if data.get('zip_code') is None:
+            response['zip_code'] = err_msg
+        if data.get('cost') is None:
+            response['cost'] = err_msg
+    elif type(err) == exc.DataError:
+        response['error'] = "DataError"
+        err_msg = "Formato invalido!"
+        if type(data.get('title')) != str:
+            response['title'] = err_msg
+        if type(data.get('zip_code')) != str:
+            response['zip_code'] = err_msg
+        if type(data.get('cost')) != (float or int):
+            response['cost'] = err_msg
+    return response
 
 def get_user_projects():
     try:
         username = request.headers.get('username')
         projects = Project.query.filter_by(username=username)
         return jsonify([p.serialize() for p in projects])
-    except SQLAlchemyError as err:
-        response = {
-            'timestamp': datetime.now(),
-            'status': 400,
-            'error': 'Bad Request',
-            'message': str(err.__dict__['orig']),
-            'path': '/projects'
-        }
+    except exc.SQLAlchemyError as err:
+        response = handle_exceptions(err, {})
         return(jsonify(response), status.HTTP_400_BAD_REQUEST)
 
 def get_project_by_id(id):
@@ -41,14 +63,8 @@ def get_project_by_id(id):
             'path': '/projects'
         }
         return(jsonify(response), status.HTTP_400_BAD_REQUEST)
-    except SQLAlchemyError as err:
-        response = {
-            'timestamp': datetime.now(),
-            'status': 400,
-            'error': 'Bad Request',
-            'message': str(err.__dict__['orig']),
-            'path': '/projects'
-        }
+    except exc.SQLAlchemyError as err:
+        response = handle_exceptions(err, {})
         return(jsonify(response), status.HTTP_400_BAD_REQUEST)
 
 
@@ -69,14 +85,8 @@ def add_project():
         db.session.add(project)
         db.session.commit()
         return  jsonify(project.serialize())
-    except SQLAlchemyError as err:
-        response = {
-            'timestamp': datetime.now(),
-            'status': 400,
-            'error': 'Bad Request',
-            'message': str(err.__dict__['orig']),
-            'path': '/projects'
-        }
+    except exc.SQLAlchemyError as err:
+        response = handle_exceptions(err, data)
         return(jsonify(response), status.HTTP_400_BAD_REQUEST)
 
 def update_project(id):
@@ -97,7 +107,7 @@ def update_project(id):
                         'timestamp': datetime.now(),
                         'status': 400,
                         'error': 'Bad Request',
-                        'message': "This project does not belong to the informed user!",
+                        'message': "O projeto não pertence ao usuário informado!",
                         'path': '/projects'
                     }
                     return(jsonify(response), status.HTTP_400_BAD_REQUEST)
@@ -106,18 +116,12 @@ def update_project(id):
             'timestamp': datetime.now(),
             'status': 400,
             'error': 'Bad Request',
-            'message': "Project not found!",
+            'message': "Projeto não encontrado!",
             'path': '/projects'
         }
         return(jsonify(response), status.HTTP_400_BAD_REQUEST)
-    except SQLAlchemyError as err:
-        response = {
-            'timestamp': datetime.now(),
-            'status': 400,
-            'error': 'Bad Request',
-            'message': str(err.__dict__['orig']),
-            'path': '/projects'
-        }
+    except exc.SQLAlchemyError as err:
+        response = handle_exceptions(err, data)
         return(jsonify(response), status.HTTP_400_BAD_REQUEST)
 
 def finalize_project(id):
@@ -148,14 +152,8 @@ def finalize_project(id):
             'path': '/projects'
         }
         return(jsonify(response), status.HTTP_400_BAD_REQUEST)
-    except SQLAlchemyError as err:
-        response = {
-            'timestamp': datetime.now(),
-            'status': 400,
-            'error': 'Bad Request',
-            'message': str(err.__dict__['orig']),
-            'path': '/projects'
-        }
+    except exc.SQLAlchemyError as err:
+        response = handle_exceptions(err, {})
         return(jsonify(response), status.HTTP_400_BAD_REQUEST)
 
 def delete_project(id):
@@ -185,14 +183,8 @@ def delete_project(id):
             'path': '/projects'
         }
         return(jsonify(response), status.HTTP_400_BAD_REQUEST)
-    except SQLAlchemyError as err:
-        response = {
-            'timestamp': datetime.now(),
-            'status': 400,
-            'error': 'Bad Request',
-            'message': str(err.__dict__['orig']),
-            'path': '/projects'
-        }
+    except exc.SQLAlchemyError as err:
+        response = handle_exceptions(err, {})
         return(jsonify(response), status.HTTP_400_BAD_REQUEST)
 
 
