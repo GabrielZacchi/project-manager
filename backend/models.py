@@ -1,22 +1,36 @@
 from database.database import db
 from sqlalchemy.orm import backref
-
+from werkzeug.security import generate_password_hash, check_password_hash
 class User(db.Model):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String(40), nullable=False)
-    password = db.Column(db.String(40), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     username = db.Column(db.String(40), nullable=False, unique=True)
 
     def __init__(self, name, username, password):
         self.name = name
-        self.username = username
-        self.password = password
+        self.username = username.lower()
+        self.password = generate_password_hash(password, method='sha256')
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
     
+    @classmethod
+    def authenticate(cls, **kwargs):
+        username = kwargs.get('username')
+        password = kwargs.get('password')
+        
+        if not username or not password:
+            return None
+
+        user = cls.query.filter_by(username=username.lower()).first()
+        if not user or not check_password_hash(user.password, password):
+            return None
+
+        return user
+
     def serialize(self):
         return {
             'id': self.id, 
