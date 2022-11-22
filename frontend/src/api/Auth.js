@@ -29,11 +29,11 @@ export const logout = () => {
 
 export const current_user = (setUser) => {
   axios.get('http://127.0.0.1:5000/current_user',
-    { headers: { "Authorization": `JWT ${localStorage.getItem('token')}` } }
+    { headers: { "Authorization": `${localStorage.getItem('token')}` } }
   ).then(res => {
     setUser(res.data);
   }).catch(err => {
-    //logout();
+    logout();
   });
 }
 

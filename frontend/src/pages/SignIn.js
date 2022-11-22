@@ -12,7 +12,7 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { login, isLogin, current_user } from '../api/Auth';
+import { login } from '../api/Auth';
 import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
@@ -31,15 +31,15 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignInPage(props) {
-  const {user, setUser} = props;
+  const {user} = props;
   const navigate = useNavigate();
   const [message, setMensagem] = React.useState("");
 
   React.useEffect(() => {
-    if (isLogin() && !user) {
-      current_user(setUser);
+    if (user) {
+      navigate('/home');
     }
-  }, []);
+  }, [user, navigate]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
