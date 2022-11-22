@@ -1,45 +1,23 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { login } from '../api/Auth';
 import { useNavigate } from 'react-router-dom';
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import Copyright from '../components/Copyright';
 
-const theme = createTheme();
+import logo from '../assets/logo.png';
+import background from '../assets/background.jpg';
 
 export default function SignInPage(props) {
   const {user} = props;
   const navigate = useNavigate();
   const [message, setMensagem] = React.useState("");
-
-  React.useEffect(() => {
-    if (user) {
-      navigate('/home');
-    }
-  }, [user, navigate]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -48,7 +26,7 @@ export default function SignInPage(props) {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <React.Fragment>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid
@@ -57,7 +35,7 @@ export default function SignInPage(props) {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: 'url(https://source.unsplash.com/random)',
+            backgroundImage: `url(${background})`,
             backgroundRepeat: 'no-repeat',
             backgroundColor: (t) =>
               t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
@@ -75,13 +53,8 @@ export default function SignInPage(props) {
               alignItems: 'center',
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Entrar
-            </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <img draggable="false" id='logo-fontes' src={logo} width="300" alt="logo-fontes"/>
+            <Box component="form" noValidate onSubmit={handleSubmit}>
               <TextField
                 margin="normal"
                 required
@@ -102,10 +75,6 @@ export default function SignInPage(props) {
                 id="password"
                 autoComplete="current-password"
               />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Lembre de mim"
-              />
               <Button
                 type="submit"
                 fullWidth
@@ -116,7 +85,7 @@ export default function SignInPage(props) {
               </Button>
               <Grid container>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link href="/signup" variant="body2">
                     {"Não tem uma conta? Inscrever-se"}
                   </Link>
                 </Grid>
@@ -126,6 +95,6 @@ export default function SignInPage(props) {
           </Box>
         </Grid>
       </Grid>
-    </ThemeProvider>
+    </React.Fragment>
   );
 }

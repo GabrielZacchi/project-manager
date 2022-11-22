@@ -1,5 +1,5 @@
 from database.database import db
-from sqlalchemy.orm import backref
+from sqlalchemy.orm import backref, validates
 from werkzeug.security import generate_password_hash, check_password_hash
 class User(db.Model):
     __tablename__ = 'user'
@@ -51,6 +51,13 @@ class Project(db.Model):
     user_project = db.relationship("User", backref=backref("user", uselist=False))
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
+
+    @validates('title', 'cost', 'zip_code', 'deadline')
+    def empty_string_to_null(self, key, value):
+        if isinstance(value,str) and value == '':
+            return None
+        else:
+            return value
 
     def __init__(
         self,

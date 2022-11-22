@@ -18,12 +18,14 @@ def handle_exceptions(err, data):
     if type(err) == exc.IntegrityError:
         response['error'] = "IntegrityError"
         err_msg = "O campo deve ser preenchido!"
-        if data.get('title') is None:
+        if not bool(data.get('title')) :
             response['title'] = err_msg
-        if data.get('zip_code') is None:
+        if not bool(data.get('zip_code')):
             response['zip_code'] = err_msg
-        if data.get('cost') is None:
+        if not bool(data.get('cost')):
             response['cost'] = err_msg
+        if not bool(data.get('deadline')):
+            response['deadline'] = err_msg
     elif type(err) == exc.DataError:
         response['error'] = "DataError"
         err_msg = "Formato invalido!"
