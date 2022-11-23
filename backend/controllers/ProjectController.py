@@ -52,6 +52,7 @@ def get_project_by_id(current_user, id):
         project = Project.query.filter_by(id=id, username=current_user.username).first()
         if project:
             project = project.serialize()
+            project['cep'] = project['zip_code']
             location = search_by_cep(project['zip_code'])
             project['zip_code'] = '{cidade}/{uf}'.format(
                 cidade = location['localidade'],

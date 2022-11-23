@@ -10,6 +10,7 @@ import searchByCep from '../../api/Cep';
 
 export default function FormProject(props) {
     const {
+        data,
         handleSubmit,
         responseErro,
         navigate
@@ -24,6 +25,13 @@ export default function FormProject(props) {
     const handleSearchByCep = () => {
         searchByCep(cep, setCepResponse);
     };
+
+    React.useEffect(() => {
+        if (data) {
+            setCep(data['cep']);
+            setCepResponse({localidade: data['zip_code']});
+        }
+    }, [data]);
 
     return (
         <Container component="form" noValidate onSubmit={handleSubmit} maxWidth="sm" sx={{ mb: 4 }}>
@@ -41,6 +49,8 @@ export default function FormProject(props) {
                             fullWidth
                             autoComplete="title"
                             variant="standard"
+                            value={data ? data.title : null}
+                            InputLabelProps={{ shrink: data }}
                             error={'title' in responseErro}
                             helperText={
                                 'title' in responseErro ?
@@ -61,6 +71,8 @@ export default function FormProject(props) {
                             autoComplete="cost"
                             variant="standard"
                             type='number'
+                            value={data ? data.cost : null}
+                            InputLabelProps={{ shrink: data }}
                             error={'cost' in responseErro}
                             helperText={
                                 'cost' in responseErro ?
@@ -84,6 +96,7 @@ export default function FormProject(props) {
                             value={cep}
                             onChange={handleChangeCep}
                             error={'zip_code' in responseErro}
+                            InputLabelProps={{ shrink: data }}
                             helperText={
                                 'zip_code' in responseErro ?
                                     <div>
@@ -122,6 +135,7 @@ export default function FormProject(props) {
                             variant="standard"
                             type='datetime-local'
                             error={'deadline' in responseErro}
+                            value={data ? data.deadline : null}
                             InputLabelProps={{ shrink: true }}
                             helperText={
                                 'deadline' in responseErro ?
