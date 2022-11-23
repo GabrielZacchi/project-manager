@@ -6,6 +6,9 @@ import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import { IconButton, InputAdornment } from '@mui/material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { login } from '../api/Auth';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,14 +18,23 @@ import logo from '../assets/logo.png';
 import background from '../assets/background.jpg';
 
 export default function SignInPage(props) {
-  const {user} = props;
+  const { user } = props;
   const navigate = useNavigate();
-  const [message, setMensagem] = React.useState("");
+  const [message, setMessage] = React.useState("");
+  const [showPwd, setShowPwd] = React.useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    login(data, setMensagem, navigate);
+    login(data, setMessage, navigate);
+  };
+
+  const handleClickShowPassword = () => {
+    setShowPwd(!showPwd);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
   };
 
   return (
@@ -53,7 +65,7 @@ export default function SignInPage(props) {
               alignItems: 'center',
             }}
           >
-            <img draggable="false" id='logo-fontes' src={logo} width="300" alt="logo-fontes"/>
+            <img draggable="false" id='logo-fontes' src={logo} width="300" alt="logo-fontes" />
             <Box component="form" noValidate onSubmit={handleSubmit}>
               <TextField
                 margin="normal"
@@ -63,17 +75,40 @@ export default function SignInPage(props) {
                 label="Usuário"
                 name="username"
                 autoComplete="username"
+                error={message}
                 autoFocus
+                onChangeCapture={() => setMessage("")}
               />
               <TextField
                 margin="normal"
                 required
                 fullWidth
                 name="password"
-                label="Password"
-                type="password"
+                label="Senha"
+                type={showPwd ? "text" : "password"}
                 id="password"
+                error={message}
+                helperText={message}
                 autoComplete="current-password"
+                onChangeCapture={() => setMessage("")}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="tornar senha visivel"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPwd ? (
+                          <VisibilityIcon />
+                        ) : (
+                          <VisibilityOffIcon />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               <Button
                 type="submit"

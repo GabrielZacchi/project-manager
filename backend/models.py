@@ -14,6 +14,13 @@ class User(db.Model):
         self.username = username.lower()
         self.password = generate_password_hash(password, method='sha256')
 
+    @validates('name', 'username', 'password')
+    def empty_string_to_null(self, key, value):
+        if isinstance(value,str) and value == '':
+            return None
+        else:
+            return value
+
     def __repr__(self):
         return '<id {}>'.format(self.id)
     

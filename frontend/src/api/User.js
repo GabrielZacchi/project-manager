@@ -1,7 +1,7 @@
 import axios from "axios";
 import { login } from "./Auth";
 
-export const postUser = (data, setMensagem) => {
+export const postUser = (data, setMessage, navigate) => {
     axios.post(
         `http://127.0.0.1:5000/users/`,
         {
@@ -9,8 +9,8 @@ export const postUser = (data, setMensagem) => {
             username: data.get('username'),
             password: data.get('password')
         }).then(res => {
-            login(data, setMensagem);
+            login(data, setMessage, navigate);
         }).catch(err => {
-            setMensagem(err.response.message);
+            setMessage(err.response.data);
         });
 }

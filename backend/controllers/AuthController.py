@@ -31,7 +31,7 @@ def login():
         'exp': datetime.now() + timedelta(hours=12)},
         current_app.config['SECRET_KEY'])
     return jsonify({'message': 'Validado com sucesso', 
-                    'token': token.encode().decode('utf-8'),
+                    'token': str(token, 'UTF-8'),
                     'iat': datetime.now(),
                     'exp': datetime.now() + timedelta(hours=12)
                     })

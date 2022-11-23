@@ -103,6 +103,7 @@ export default function FormProject(props) {
                                 variant="standard"
                                 type='datetime-local'
                                 error={'deadline' in responseErro}
+                                InputLabelProps={{ shrink: true }}
                                 helperText={
                                     'deadline' in responseErro ?
                                         <div>

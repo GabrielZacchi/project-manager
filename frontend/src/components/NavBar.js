@@ -30,7 +30,7 @@ export default function NavBar(props) {
                     </Box>
                     <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                         <Typography variant="h6">
-                            Olá, { user ? user.name : null} {
+                            Olá, { user?.name ?? (() => window.location.reload())} {
                                 <IconButton
                                     onClick={handleClickOpenDialogConfirm}
                                     color="inherit"

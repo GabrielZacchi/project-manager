@@ -3,7 +3,7 @@
 
 import axios from 'axios';
 
-export const login = (data, setMensagem, navigate) => {
+export const login = (data, setMessage, navigate) => {
   axios.post(`http://127.0.0.1:5000/signin`, {},
     {
       headers: {
@@ -17,7 +17,7 @@ export const login = (data, setMensagem, navigate) => {
       localStorage.setItem('token', res.data.token);
       navigate('/home');
     }).catch(err => {
-      setMensagem(err.response.message);
+      setMessage(err.response.data.message);
     });
 };
 
@@ -33,7 +33,7 @@ export const currentUser = (setUser) => {
   ).then(res => {
     setUser(res.data);
   }).catch(err => {
-    //logout();
+    logout();
   });
 }
 
