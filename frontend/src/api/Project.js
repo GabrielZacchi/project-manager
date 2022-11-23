@@ -11,11 +11,13 @@ export const getProjects = (setData) => {
     });
 }
 
-export const getProjectById = (id, setData) => {
-    axios.get(`http://127.0.0.1:5000/projects/${id}`,
+export const getProjectById = async (id, setData, setLoading) => {
+    setLoading(true);
+    await axios.get(`http://127.0.0.1:5000/projects/${id}`,
         { headers: { "Authorization": localStorage.getItem('token') } }
     ).then(res => {
         setData(res.data);
+        setLoading(false);
     }).catch(err => {
         if (err.response.status === 401) {
             logout();
@@ -45,7 +47,7 @@ export const postProject = (data, navigate, setResponseErro) => {
 }
 
 export const putProject = (id, data, navigate, setResponseErro) => {
-    axios.post(
+    axios.put(
         `http://127.0.0.1:5000/projects/${id}`,
         {
             title: data.get('title'),

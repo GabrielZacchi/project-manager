@@ -11,10 +11,13 @@ import {
 } from '../../api/Project';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DoneIcon from '@mui/icons-material/Done';
+import EditIcon from '@mui/icons-material/Edit';
 import ConfirmDialog from '../ConfirmDialog';
 import Tooltip from "@mui/material/Tooltip";
+import { useNavigate } from 'react-router-dom';
 
 export default function ProjectTable() {
+    const navigate = useNavigate();
     const [data, setData] = React.useState([]);
     const [openDialogConfirmDelete, setOpenDialogConfirmDelete] = React.useState(false);
     const [openDialogConfirmDone, setOpenDialogConfirmDone] = React.useState(false);
@@ -64,6 +67,15 @@ export default function ProjectTable() {
         [],
     );
 
+    const editProjectAction = React.useCallback(
+        (id) => () => {
+            setTimeout(() => {
+                navigate(`/project/${id}`);
+            });
+        },
+        [navigate],
+    );
+
     const columns = React.useMemo(() => [
         {
             field: 'id', headerName: 'ID', identity: true
@@ -89,8 +101,15 @@ export default function ProjectTable() {
         {
             field: 'actions',
             type: 'actions',
-            width: 80,
+            flex: 1,
             getActions: (params) => [
+                <Tooltip title="Editar projeto">
+                    <GridActionsCellItem
+                        icon={<EditIcon />}
+                        label="Editar"
+                        onClick={editProjectAction(params.id)}
+                    />
+                </Tooltip>,
                 <Tooltip title="Excluir projeto">
                     <GridActionsCellItem
                         icon={<DeleteIcon />}
@@ -108,7 +127,7 @@ export default function ProjectTable() {
             ],
         },
     ],
-        [deleteProjectAction, doneProjectAction],
+        [deleteProjectAction, doneProjectAction, editProjectAction],
     );
 
     return (
